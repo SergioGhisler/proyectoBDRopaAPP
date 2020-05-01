@@ -1,0 +1,171 @@
+<script src="https://unpkg.com/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
+    <script src="https://unpkg.com/@tensorflow/tfjs-automl"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+    <head>
+      <title>Change image on select new image from file input</title>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  </head>
+    <input type="file" name="file" id="profile-img">
+    <img src="" id="profile-img-tag"  width="200px">
+    <button onclick="run()">Pulsame para predecir</button>
+      
+    <script type="text/javascript">
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function (e) {
+                    $('#profile-img-tag').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        $("#profile-img").change(function(){
+            readURL(this);
+        });
+        </script>
+ <script>
+    async function  run(){
+      let arrMandar=[];
+      var pantalones=0;
+      const model = await tf.automl.loadObjectDetection('model.json');
+      const img = document.getElementById('profile-img-tag');
+      const options = {score: 0.3, iou: 0.3, topk: 20};
+      const predictions = await model.detect(img, options);
+      console.log(predictions);
+      // Show the resulting object on the page.
+      const pre = document.createElement('pre');
+      pre.textContent = JSON.stringify(predictions, null, 2);
+      document.body.append(pre);
+
+      var c = document.createElement("CANVAS");
+      
+      var ctx=c.getContext("2d");
+      var img2=document.getElementById("profile-img-tag");  
+      
+      c.width = img2.width;
+      c.height = img2.height;
+      ctx.drawImage(img2,0,0,img2.width,img2.height);  
+      document.body.appendChild(c);
+
+      const net = await posenet.load();
+      const poses = await net.estimateMultiplePoses(img2, {
+        flipHorizontal: false,
+        maxDetections: 2,
+        scoreThreshold: 0.6,
+        nmsRadius: 20});
+        console.log(poses);
+
+    for (let j=0;j<poses.length;j++){
+     
+      for(let i=0;i<poses[0]['keypoints'].length;i++){
+          ctx.fillRect(poses[j]['keypoints'][i]['position']['x'],poses[j]['keypoints'][i]['position']['y'],10,10);
+          console.log(poses[j]['keypoints'][i]['position']['x']);
+        }
+    }
+      for(var i =0;i<predictions.length;i++){
+        ctx.lineWidth=2
+        ctx.strokeStyle = "#FF0000";
+      console.log("vuelta");
+      ctx.strokeRect(predictions[i]['box']['left'], predictions[i]['box']['top'], predictions[i]['box']['width'], predictions[i]['box']['height']);
+      ctx.lineWidth=1
+      ctx.strokeText(predictions[i]['label'],predictions[i]['box']['left'], predictions[i]['box']['top']);
+
+      var x = document.createElement("CANVAS");
+      x.width = predictions[i]['box']['width'];
+      x.height = predictions[i]['box']['height'];
+      var ctxaux = x.getContext("2d");
+      
+      var constx=getImageDimentions(img2).width/img2.width;
+      var consty=getImageDimentions(img2).height/img2.height;
+      
+      if(predictions[i]['label']=='trousers'){
+        
+          x.width = 20;
+          x.height = 30;
+          
+        for(var z=11;z<13;z++){
+         
+          void ctxaux.drawImage(img2,(poses[pantalones]['keypoints'][z]['position']['x'])*constx, (poses[pantalones]['keypoints'][z]['position']['y'])*consty, 20*constx, 30*consty,(z-11)*10,0, 10*constx, 30*consty);
+
+        }
+        
+
+      pantalones=pantalones+1;
+      } else{
+        void ctxaux.drawImage(img2,(predictions[i]['box']['left']+10)*constx, (predictions[i]['box']['top']+20)*consty, (predictions[i]['box']['width']-20)*constx, (predictions[i]['box']['height']-40)*consty,0,0, predictions[i]['box']['width'], predictions[i]['box']['height']);
+      
+      }
+      
+
+      const URL = "https://teachablemachine.withgoogle.com/models/L_-u6q50C/";
+      const modelURL = URL + "model.json";
+      const metadataURL = URL + "metadata.json";
+      model2 = await tmImage.load(modelURL, metadataURL);
+      maxPredictions = model2.getTotalClasses();
+
+      
+      const predictions2 = await model2.predict(x);
+      console.log(predictions2)
+      var resultado=0;
+      var frase;
+      var label=predictions[i]['label'];
+      for (let i = 0; i < maxPredictions; i++) {
+            if(resultado < predictions2[i].probability.toFixed(2)){
+              resultado=predictions2[i].probability.toFixed(2);
+              frase= '{"color": "'+predictions2[i].className+'","probabilidad": "'+predictions2[i].probability.toFixed(2)+'","tipo": "'+label+'"}';
+              var obj = JSON.parse(frase);
+            }
+            console.log("hola")
+      }
+      arrMandar.push(obj);
+      const pre2 = document.createElement('pre2');
+      pre2.textContent = JSON.stringify(obj, null, 2);
+      
+      document.body.append(pre2);
+      document.body.appendChild(x);
+    }
+    const doc = document.createElement('doc');
+    doc.textContent= JSON.stringify(arrMandar,null,2);
+    document.body.append(doc);
+    }
+
+
+    function getImageDimentions(imageNode) {
+  var source = imageNode.src;
+  var imgClone = document.createElement("img");
+  imgClone.src = source;
+  return {width: imgClone.width, height: imgClone.height}
+}
+    </script>
+
+
+  
+
+    <body>
+
+      <!-- The core Firebase JS SDK is always required and must be listed first -->
+      <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-app.js"></script>
+      
+      <!-- TODO: Add SDKs for Firebase products that you want to use
+           https://firebase.google.com/docs/web/setup#available-libraries -->
+      <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-analytics.js"></script>
+      
+      <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+          apiKey: "AIzaSyBIyBmShRUkWEWSt5vpxKKaOBpJfK41DRs",
+          authDomain: "prediction-87ac9.firebaseapp.com",
+          databaseURL: "https://prediction-87ac9.firebaseio.com",
+          projectId: "prediction-87ac9",
+          storageBucket: "prediction-87ac9.appspot.com",
+          messagingSenderId: "1093549307469",
+          appId: "1:1093549307469:web:887e912c4b981a25eb4e04",
+          measurementId: "G-4CH5LKYCBM"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+      </script></body>
