@@ -19,6 +19,7 @@ class InfoWidget extends StatelessWidget {
       @required this.images,
       @required this.link})
       : super(key: key);
+      
   Widget build(BuildContext context) {
     print(images);
     return Scaffold(

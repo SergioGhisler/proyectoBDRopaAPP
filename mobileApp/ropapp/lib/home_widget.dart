@@ -12,6 +12,7 @@ import 'package:ropapp/values/values.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'transicion/transition_witget.dart';
+import 'package:ropapp/pruebasTF.dart';
 
 class HomeWidget extends StatefulWidget {
   static double phoneWidth=_HomeWidgetState.phoneWidth;
@@ -124,7 +125,17 @@ class _HomeWidgetState extends State<HomeWidget> {
                         )),
                   ),
                   Spacer(),
-                  _image== null?Container():
+                  _image== null?Align(
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                        width: 57,
+                        height: 57,
+                        child: FloatingActionButton(
+                          heroTag: 'pasarPagina',
+                          backgroundColor: Colors.grey,
+                          child: Icon(Icons.send),
+                        )),
+                  ):
                   Align(
                     alignment: Alignment.topLeft,
                     child: Container(
@@ -136,7 +147,8 @@ class _HomeWidgetState extends State<HomeWidget> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TransitionWidget()),
+                                  //builder: (context) => TransitionWidget()),
+                                  builder: (context) => PruebasTF(photo:_image)),
                             );
                           },
                           child: Icon(Icons.send),

@@ -4,7 +4,7 @@ import 'package:ropapp/home_widget.dart';
 
 class Item extends StatelessWidget {
   final String photo;
-  final double precio;
+  final String precio;
   final Function action;
   const Item(this.photo, this.precio,this.action);
 
@@ -28,7 +28,7 @@ class Item extends StatelessWidget {
             ),
             Container(margin: EdgeInsets.only(top:HomeWidget.phoneBlockHeight*1),),
             Text(
-              precio.toString() + " EUR",
+              precio.toString(),
               textAlign: TextAlign.left,
               style: TextStyle(
                 color: AppColors.primaryText,

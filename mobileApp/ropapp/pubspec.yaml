@@ -32,6 +32,11 @@ dependencies:
   flutter_swiper : 
   nice_button: ^0.1.7
   webview_flutter:
+  image: 
+  tflite:
+  image_crop: ^0.3.2
+  image_cropper: ^1.2.2
+  palette_generator: ^0.2.2
 
 dev_dependencies:
   flutter_test:
@@ -58,7 +63,15 @@ flutter:
   # https://flutter.dev/assets-and-images/#resolution-aware.
   assets:
     - assets/images/
-    - assets/images/vestidos/
+    - assets/model/ropaLabels.txt
+    - assets/model/ropaModel.tflite
+    - assets/model/labels_abajo.txt
+    - assets/model/partes_abajo.tflite
+    - assets/model/labels_arriba.txt
+    - assets/model/partes_arriba.tflite
+    - assets/model/coloresLabels.txt
+    - assets/model/colores.tflite
+
   
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
