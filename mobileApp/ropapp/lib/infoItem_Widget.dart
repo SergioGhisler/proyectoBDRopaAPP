@@ -1,10 +1,18 @@
+/*
+Esta clase corresponde a una pantalla en la que se muestra 
+la prenda seleccionada con todo detalle, visualizando el nombre de la prenda, 
+varias fotos de la prenda y por último en la parte de abajo un botón que 
+dirigirá al usuario a la página de ASOS para poder comprar la prenda, gracias 
+a la clase web_widget.dart
+*/
+
 import 'package:flutter/material.dart';
 import 'package:ropapp/values/values.dart';
 import 'package:ropapp/home_widget.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:nice_button/nice_button.dart';
 import 'package:ropapp/web_widget.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+
 
 class InfoWidget extends StatelessWidget {
   @override

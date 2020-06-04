@@ -1,4 +1,14 @@
-import 'dart:convert';
+/*
+Clase la cual la cual representa las recomendaciones de prendas 
+similares predichas por el modelo. Muestra modelos diferentes para 
+cada prenda, con el color correspondiente predicho por el modelo y 
+el precio correspondiente. Cuando pulsas encima de una de las prendas, 
+dirige a la clase infoItem_widget.dart, dónde nos mostrará la prenda 
+en detalle, más imágenes de la prenda en cuestión y dónde se podrá 
+redirigir a la página de ASOS para realizar la compra.
+*/
+
+
 import 'dart:io';
 import 'package:collection/collection.dart';
 import 'dart:convert' as convert;
@@ -14,16 +24,20 @@ import 'colorsPred.dart';
 import 'package:ropapp/API.dart';
 import 'package:ropapp/item.dart';
 
-class PruebasTF extends StatefulWidget {
-  final File photo;
 
-  const PruebasTF({this.photo});
+
+class AllItems extends StatefulWidget {
+  final File photo;
+  final String sex;
+  final bool isAndroid;
+
+  const AllItems({this.photo, this.sex,this.isAndroid});
 
   @override
-  _PruebasTFState createState() => _PruebasTFState();
+  _AllItemsState createState() => _AllItemsState();
 }
 
-class _PruebasTFState extends State<PruebasTF> {
+class _AllItemsState extends State<AllItems> {
   bool _busy = false;
   int _ropaLen;
   double _imageWidth;
@@ -34,9 +48,11 @@ class _PruebasTFState extends State<PruebasTF> {
   List _resul;
   List<List> _colorRecog;
   int contador = 0;
+  int _contadorAux = 0;
 
   List scrape = new List();
   List predicfinal = new List();
+  String _sex = "women";
 
   void initState() {
     super.initState();
@@ -69,7 +85,7 @@ class _PruebasTFState extends State<PruebasTF> {
       path: widget.photo.path,
       threshold: 0.35,
     );
-    Tflite.close();
+
     print(recognitions);
     print(_imageHeight);
     print(_imageWidth);
@@ -156,12 +172,30 @@ class _PruebasTFState extends State<PruebasTF> {
   }
 
   void conectApi(url) async {
-    String Data = await Getdata("http://127.0.0.1:5000/api?Query=" + url);
-    setState(() {
-      scrape.add(convert.jsonDecode(Data));
-      predicfinal.add(url);
-    });
-  
+    bool aux =true;
+    if(_recognitions.length==scrape.length) return;
+    while (aux ) {
+      String Data;
+      if (widget.isAndroid) {
+        Data = await Getdata(
+            "http://10.0.2.2:5000/api?Query=" + url + " " + widget.sex);
+      } else {
+        Data = await Getdata(
+            "http://127.0.0.1:5000/api?Query=" + url + " " + widget.sex);
+      }
+      String Datos = Data;
+      setState(() {
+        try{
+          scrape.add(convert.jsonDecode(Data));   
+          aux=false;
+           predicfinal.add(url);
+        }catch (e)  {
+          print('repetimos');
+        }
+    
+       
+      });
+    }
   }
 
   Future<void> color() async {
@@ -210,15 +244,13 @@ class _PruebasTFState extends State<PruebasTF> {
       print(colorRecog);
       String aux =
           colorRecog[i][0]["label"] + " " + _recognitions[i]["detectedClass"];
-  
+
       print(aux);
       conectApi(aux);
     }
     for (int i = 0; i < scrape.length; i++) {
       print(scrape[i]);
     }
-
-    Tflite.close();
 
     setState(() {
       _colorRecog = colorRecog;

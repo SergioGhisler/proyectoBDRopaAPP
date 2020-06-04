@@ -1,3 +1,8 @@
+/*
+Clase que nos permite tener la vista de la página web.
+*/
+
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';

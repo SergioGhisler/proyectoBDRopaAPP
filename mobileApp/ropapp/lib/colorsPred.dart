@@ -1,4 +1,17 @@
+/*
+Clase que contiene el metodo colorPred, esta clase hace  el 
+procesado de la imágen (cortar la imagen en los distintos trozos,
+decodificar la imagen para ponerla en el formato correcto...).
 
+El método color pred, pide:
+img->Imagen completa que queremos procesar.
+recognition-> Lista con los distintos puntos que hemos predicho que 
+seran los que debemos de marcar como límites de nuestra imagen.
+_imageWidth-> Ancho de la imágen, lo cual se utilizara para que 
+el problema se pueda adaptar a cualquier tamaño de imágen.
+_imageHeight-> Ancho de la imágen, lo cual se utilizara para que 
+el problema se pueda adaptar a cualquier tamaño de imágen.
+*/
 import 'package:image/image.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -6,15 +19,15 @@ import 'package:path_provider/path_provider.dart';
 
 
   void colorPred(File img, List recognition, double _imageWidth , double _imageHeight)  async {
-    print('IMHERE!!!!!!!!!!!!!!!!!!!!!!');
-    print(recognition);
+
     Image image = decodeJpg(img.readAsBytesSync());
     
       double factorX = _imageWidth;
       double factorY = _imageHeight;
   
       int contador=0;
-      
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      String appDocPath = appDocDir.path;
     for (var i in recognition){
   
         var left= (i["rect"]["x"] * factorX).round();
@@ -30,10 +43,9 @@ import 'package:path_provider/path_provider.dart';
        // File('thumbnail.png').writeAsBytesSync(encodePng(copyCrop(image,left, top,  width,  height)));
         
       
-       Directory appDocDir = await getApplicationDocumentsDirectory();
-      String appDocPath = appDocDir.path;
+       
       var aux= copyCrop(image,left, top,  width,  height) ;
-
+      print(aux);
 
       if(width>height){
           aux=copyResizeCropSquare(aux,height);

@@ -1,9 +1,6 @@
 /*
-*  colors.dart
-*  DISEÑO APP
-*
-*  Created by [Author].
-*  Copyright © 2018 [Company]. All rights reserved.
+Clase en la que inicializamos colores que usamos a menudo para
+agilizar el proceso.
     */
 
 import 'dart:ui';

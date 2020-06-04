@@ -1,30 +1,36 @@
+
 /*
-*  mobile_dark_widget.dart
-*  DISEÑO APP
-*
-*  Created by [Author].
-*  Copyright © 2018 [Company]. All rights reserved.
-    */
+Clase que representa la pantalla inicial de la aplicación, en la 
+que se muestra el logo de RopApp, y en la que se encuentra un 
+mensaje dicindo que se está esperando la imagen. Asimismo, hay 
+2 botones que nos permiten subir una imagen para que se busque ropa 
+similar a la que aparezca, el tercer botón está inhabilitado. Una 
+vez esté la foto, se va a habilitar el tercer botón, en este caso,
+un speedDial, (al pulsarlo se nos despliegan dos nuevos botones), que nos permite 
+elegir si buscamos ropa de hombre o de mujer, y tras dar a una 
+de las dos opciones, nos dirigirá a la clase allItems_widget.dart
+*/
+
 
 import 'dart:io';
 
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:ropapp/values/custom_icons_icons.dart';
 import 'package:ropapp/values/values.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'transicion/transition_witget.dart';
-import 'package:ropapp/pruebasTF.dart';
+import 'package:ropapp/allItems_widget.dart';
 
 class HomeWidget extends StatefulWidget {
-  static double phoneWidth=_HomeWidgetState.phoneWidth;
-  static double phoneHeight=_HomeWidgetState.phoneWidth;
-  static double phoneBlockWidth=_HomeWidgetState.phoneBlockWidth;
-  static double phoneBlockHeight=_HomeWidgetState.phoneBlockHeight;
+  static double phoneWidth = _HomeWidgetState.phoneWidth;
+  static double phoneHeight = _HomeWidgetState.phoneWidth;
+  static double phoneBlockWidth = _HomeWidgetState.phoneBlockWidth;
+  static double phoneBlockHeight = _HomeWidgetState.phoneBlockHeight;
   @override
   _HomeWidgetState createState() => _HomeWidgetState();
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  
   static double phoneWidth;
 
   static double phoneHeight;
@@ -33,6 +39,8 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   static double phoneBlockHeight;
   File _image;
+
+  bool android =Platform.isAndroid;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +63,84 @@ class _HomeWidgetState extends State<HomeWidget> {
     }
 
     return Scaffold(
+      floatingActionButtonLocation:FloatingActionButtonLocation.centerFloat ,
+      floatingActionButton: _image == null
+          ?  SpeedDial(
+            marginRight: phoneBlockWidth*46.5,
+            backgroundColor: Colors.grey,
+            marginBottom: phoneBlockHeight*5,
+              animatedIcon: AnimatedIcons.search_ellipsis,
+              animatedIconTheme: IconThemeData(size: phoneBlockWidth*5),
+              visible: true,
+              curve: Curves.bounceIn
+            )
+          : SpeedDial(
+            marginRight: phoneBlockWidth*46.5,
+            marginBottom: phoneBlockHeight*5,
+              animatedIcon: AnimatedIcons.search_ellipsis,
+              animatedIconTheme: IconThemeData(size: phoneBlockWidth*5),
+              visible: true,
+              curve: Curves.bounceIn,
+              children: [
+                // FAB 1
+                SpeedDialChild(
+                    child: Icon(CustomIcons.female),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            //builder: (context) => TransitionWidget()),
+                            builder: (context) => AllItems(
+                                  photo: _image,
+                                  sex: "women",
+                                  isAndroid: android,
+                                )),
+                      );
+                    },
+                    label: 'Mujer',
+                    labelStyle: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                        fontSize: 16.0),
+                    labelBackgroundColor: Colors.blue),
+                // FAB 2
+
+                SpeedDialChild(
+                    child: Icon(CustomIcons.male),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            //builder: (context) => TransitionWidget()),
+                            builder: (context) => AllItems(
+                                  photo: _image,
+                                  sex: "men",
+                                  isAndroid: android,
+                                )),
+                      );
+                    },
+                    label: 'Hombre',
+                    labelStyle: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                        fontSize: 16.0),
+                    labelBackgroundColor: Colors.blue)
+              ],
+            ),
+
+      /* FloatingActionButton(
+                          heroTag: 'pasarPagina',
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  //builder: (context) => TransitionWidget()),
+                                  builder: (context) => PruebasTF(photo:_image)),
+                            );
+                          },
+                          child: Icon(Icons.send),
+                        )),*/
+
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(0),
         child: AppBar(
@@ -81,7 +167,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                     children: [
                       Image.asset(
                         "assets/images/logoRopapp.png",
-                        width: phoneBlockWidth*80,
+                        width: phoneBlockWidth * 80,
                       ),
                     ],
                   ),
@@ -124,36 +210,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                           child: Icon(Icons.photo_library),
                         )),
                   ),
-                  Spacer(),
-                  _image== null?Align(
-                    alignment: Alignment.topLeft,
-                    child: Container(
-                        width: 57,
-                        height: 57,
-                        child: FloatingActionButton(
-                          heroTag: 'pasarPagina',
-                          backgroundColor: Colors.grey,
-                          child: Icon(Icons.send),
-                        )),
-                  ):
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Container(
-                        width: 57,
-                        height: 57,
-                        child: FloatingActionButton(
-                          heroTag: 'pasarPagina',
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  //builder: (context) => TransitionWidget()),
-                                  builder: (context) => PruebasTF(photo:_image)),
-                            );
-                          },
-                          child: Icon(Icons.send),
-                        )),
-                  ),
                 ],
               ),
             ),
@@ -179,11 +235,9 @@ class _HomeWidgetState extends State<HomeWidget> {
                 style: TextStyle(
                   fontSize: 40,
                   color: Colors.white,
-                  fontFamily:'Montserrat', 
-                  
+                  fontFamily: 'Montserrat',
                 ),
                 textAlign: TextAlign.center,
-                
               ),
             )
           : ClipRRect(

@@ -1,3 +1,7 @@
+/*
+Clase que nos devuelve un contenedor con los datos de cada 
+Item, esto agilizara el proceso de creación de items.
+*/
 import 'package:flutter/material.dart';
 import 'package:ropapp/values/values.dart';
 import 'package:ropapp/home_widget.dart';

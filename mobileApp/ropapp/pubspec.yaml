@@ -37,6 +37,7 @@ dependencies:
   image_crop: ^0.3.2
   image_cropper: ^1.2.2
   palette_generator: ^0.2.2
+  flutter_speed_dial: ^1.2.5
 
 dev_dependencies:
   flutter_test:
@@ -102,3 +103,6 @@ flutter:
     - family: Montserrat
       fonts:
         - asset: assets/fonts/Montserrat-Regular.ttf
+    - family:  CustomIcons
+      fonts:
+        - asset: assets/fonts/CustomIcons.ttf
